@@ -120,7 +120,7 @@ app.get("/hrtvdashboard", (req, res) => {
   res.send(`
   <html>
   <head>
-    <title>OTT Dashboard</title>
+    <title>Costumer</title>
     <style>
       body{background:#111;color:#fff;font-family:Arial;padding:20px}
       input,button{padding:6px;margin:4px}
@@ -130,7 +130,7 @@ app.get("/hrtvdashboard", (req, res) => {
   </head>
   <body>
 
-    <h2>📊 User-Agent Dashboard</h2>
+    <h2>👤 Customer dashboard</h2>
 
     <p><b>Last Playlist:</b> ${lastPlaylist}</p>
     <p><b>Last User-Agent:</b><br>${lastUA}</p>
