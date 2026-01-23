@@ -11,16 +11,16 @@ app.use(express.urlencoded({ extended: true }));
 // Playlists
 const playlist1URL = "https://hntv.netlify.app/pa-id.html";
 const playlist2URL = "https://shorten.is/pppppaiid";
-const altStreamURL = "https://pastebin.com/pUkjwPFv";
+const altStreamURL = "https://hntv.netlify.app/free-playlist";
 
 // Forced headers
-const FORCED_REFERER = "https://hntv.netlify.app/free-playlist";
+const FORCED_REFERER = "https://hntv.netlify.app/pa-id.html";
 
 // User-Agents WITH NAMES (editable)
 let allowedAgents = [
-  { name: "OTT Navigator", ua: "OTT Navigator" },
-  { name: "OTT Player", ua: "OTT Player" },
-  { name: "OTT TV", ua: "OTT TV" }
+  { name: "OTT Navigator", ua: "OTT Navigator1.7.2.2 (Linux;Android 13; en; 1mfhuaz)" },
+  { name: "OTT Player", ua: "OTT Player/1.7.2.2 (Linux;Android 13; en; 1mfhuaz)" },
+  { name: "OTT TV", ua: "OTT TV/1.7.2.2 (Linux;Android 13; en; 1mfhuaz)" }
 ];
 
 // Last request info
