@@ -9,7 +9,6 @@ const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 
 /* ================= FIREBASE ================= */
-// Load your Firebase service account key JSON
 const serviceAccount = JSON.parse(fs.readFileSync("./serviceAccountKey.json", "utf8"));
 
 admin.initializeApp({
@@ -90,6 +89,7 @@ app.get("/", (req, res) => {
 async function servePlaylist(req, res, ottURL, playlistName) {
   const userAgent = req.headers["user-agent"] || "Unknown UA";
 
+  // Save to Firestore
   await saveDetectedUA(userAgent);
   await updateStats(playlistName, userAgent);
 
@@ -135,7 +135,7 @@ app.get("/hrtvdashboard", async (req, res) => {
   res.send(`
   <html>
   <head>
-    <title>HONOR TV PH Dashboard</title>
+    <title>Customer Dashboard</title>
     <style>
       body{background:#111;color:#fff;font-family:Arial;padding:20px}
       input,button{padding:6px;margin:4px}
@@ -151,12 +151,14 @@ app.get("/hrtvdashboard", async (req, res) => {
     <p><b>Last User-Agent:</b><br>${stats.lastUA || "None"}</p>
 
     <h3>✅ Allowed User-Agents</h3>
-    ${allowedAgents.map(a => `
+    ${allowedAgents.map((a, i) => `
       <div class="box">
         <form method="POST" action="/hrtvdashboard/edit">
           <input type="hidden" name="id" value="${a.id}">
-          Name: <input name="name" value="${a.name}" required>
-          UA: <input name="ua" value="${a.ua}" required>
+          Name:
+          <input name="name" value="${a.name}" required>
+          UA:
+          <input name="ua" value="${a.ua}" required>
           <button>💾 Save</button>
         </form>
         <form method="POST" action="/hrtvdashboard/delete">
@@ -198,8 +200,7 @@ app.post("/hrtvdashboard/add", async (req, res) => {
 });
 
 app.post("/hrtvdashboard/edit", async (req, res) => {
-  const ref = db.collection("allowedAgents").doc(req.body.id);
-  await ref.update({
+  await db.collection("allowedAgents").doc(req.body.id).update({
     name: req.body.name,
     ua: req.body.ua
   });
@@ -207,8 +208,7 @@ app.post("/hrtvdashboard/edit", async (req, res) => {
 });
 
 app.post("/hrtvdashboard/delete", async (req, res) => {
-  const ref = db.collection("allowedAgents").doc(req.body.id);
-  await ref.delete();
+  await db.collection("allowedAgents").doc(req.body.id).delete();
   res.redirect("/hrtvdashboard");
 });
 
