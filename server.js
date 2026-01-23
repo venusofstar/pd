@@ -80,7 +80,7 @@ app.get("/", (req, res) => {
       <div class="box">
         <h1>📺 HONOR TV PH</h1>
         <h2>WELCOME TO HONOR TV PH</h2>
-        <p>Subscription Available</p>
+        <p>Subscription Always Available</p>
 
       </div>
     </body>
