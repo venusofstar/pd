@@ -1,59 +1,34 @@
 import express from "express";
 import fetch from "node-fetch";
-import admin from "firebase-admin";
-import fs from "fs";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.urlencoded({ extended: true }));
 
-/* ================= FIREBASE ================= */
-const serviceAccount = JSON.parse(fs.readFileSync("./serviceAccountKey.json", "utf8"));
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
-const db = admin.firestore();
-
 /* ================= CONFIG ================= */
+
+// Playlists
 const playlist1URL = "https://hntv.netlify.app/pa-id.html";
 const playlist2URL = "https://hntv.netlify.app/pa-id2.html";
 const altStreamURL = "https://hntv.netlify.app/free-playlist";
+
+// Forced headers
 const FORCED_REFERER = "https://hntv.netlify.app/pa-id.html";
 
-/* ================= FIRESTORE HELPERS ================= */
-async function getAllowedAgents() {
-  const snap = await db.collection("allowedAgents").get();
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-}
+// Allowed User-Agents (editable)
+let allowedAgents = [
+  { name: "My OTT PLAYER", ua: "OTT Player/1.7.4.1 (Linux;Android 13; en; ewzbl4)" },
+  { name: "My OTT NAVIGATOR", ua: "OTT Navigator/1.7.3.1 (Linux;Android 13; en; zdokxl)" },
+  { name: "My OTT TV", ua: "OTT TV/1.7.2.2 (Linux;Android 13; en; 1mfhuaz)" }
+];
 
-async function saveDetectedUA(userAgent) {
-  const ref = db.collection("detectedAgents").doc(encodeURIComponent(userAgent));
-  const docSnap = await ref.get();
+// Detected User-Agents (auto)
+let detectedAgents = [];
 
-  if (docSnap.exists) {
-    await ref.update({
-      count: admin.firestore.FieldValue.increment(1),
-      lastSeen: new Date().toLocaleString()
-    });
-  } else {
-    await ref.set({
-      ua: userAgent,
-      count: 1,
-      lastSeen: new Date().toLocaleString()
-    });
-  }
-}
-
-async function updateStats(playlist, ua) {
-  await db.collection("stats").doc("last").set({
-    lastPlaylist: playlist,
-    lastUA: ua,
-    time: new Date().toLocaleString()
-  });
-}
+// Last request info
+let lastUA = "None";
+let lastPlaylist = "None";
 
 /* ================= HOME ================= */
 app.get("/", (req, res) => {
@@ -88,13 +63,26 @@ app.get("/", (req, res) => {
 /* ================= PLAYLIST HANDLER ================= */
 async function servePlaylist(req, res, ottURL, playlistName) {
   const userAgent = req.headers["user-agent"] || "Unknown UA";
+  lastUA = userAgent;
+  lastPlaylist = playlistName;
 
-  // Save to Firestore
-  await saveDetectedUA(userAgent);
-  await updateStats(playlistName, userAgent);
+  // Save detected UA
+  const found = detectedAgents.find(d => d.ua === userAgent);
+  if (found) {
+    found.count++;
+    found.lastSeen = new Date().toLocaleString();
+  } else {
+    detectedAgents.push({
+      ua: userAgent,
+      count: 1,
+      lastSeen: new Date().toLocaleString()
+    });
+  }
 
-  const allowedAgents = await getAllowedAgents();
-  const allowed = allowedAgents.some(a => userAgent.includes(a.ua));
+  const allowed = allowedAgents.some(a =>
+    userAgent.includes(a.ua)
+  );
+
   const finalURL = allowed ? ottURL : altStreamURL;
 
   try {
@@ -106,7 +94,9 @@ async function servePlaylist(req, res, ottURL, playlistName) {
       }
     });
 
-    if (!response.ok) return res.status(response.status).send("Stream fetch error");
+    if (!response.ok) {
+      return res.status(response.status).send("Stream fetch error");
+    }
 
     res.setHeader("Content-Type", "application/vnd.apple.mpegurl");
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -120,22 +110,17 @@ async function servePlaylist(req, res, ottURL, playlistName) {
 app.get("/playlist1.m3u", (req, res) =>
   servePlaylist(req, res, playlist1URL, "playlist1.m3u")
 );
+
 app.get("/playlist2.m3u", (req, res) =>
   servePlaylist(req, res, playlist2URL, "playlist2.m3u")
 );
 
 /* ================= DASHBOARD ================= */
-app.get("/hrtvdashboard", async (req, res) => {
-  const allowedAgents = await getAllowedAgents();
-  const detectedSnap = await db.collection("detectedAgents").get();
-  const detectedAgents = detectedSnap.docs.map(d => d.data());
-  const statsDoc = await db.collection("stats").doc("last").get();
-  const stats = statsDoc.exists ? statsDoc.data() : {};
-
+app.get("/hrtvdashboard", (req, res) => {
   res.send(`
   <html>
   <head>
-    <title>Customer Dashboard</title>
+    <title>Costumer</title>
     <style>
       body{background:#111;color:#fff;font-family:Arial;padding:20px}
       input,button{padding:6px;margin:4px}
@@ -147,14 +132,15 @@ app.get("/hrtvdashboard", async (req, res) => {
 
     <h2>👤 Customer dashboard</h2>
 
-    <p><b>Last Playlist:</b> ${stats.lastPlaylist || "None"}</p>
-    <p><b>Last User-Agent:</b><br>${stats.lastUA || "None"}</p>
+    <p><b>Last Playlist:</b> ${lastPlaylist}</p>
+    <p><b>Last User-Agent:</b><br>${lastUA}</p>
 
     <h3>✅ Allowed User-Agents</h3>
+
     ${allowedAgents.map((a, i) => `
       <div class="box">
         <form method="POST" action="/hrtvdashboard/edit">
-          <input type="hidden" name="id" value="${a.id}">
+          <input type="hidden" name="index" value="${i}">
           Name:
           <input name="name" value="${a.name}" required>
           UA:
@@ -162,7 +148,7 @@ app.get("/hrtvdashboard", async (req, res) => {
           <button>💾 Save</button>
         </form>
         <form method="POST" action="/hrtvdashboard/delete">
-          <input type="hidden" name="id" value="${a.id}">
+          <input type="hidden" name="index" value="${i}">
           <button>❌ Delete</button>
         </form>
       </div>
@@ -176,12 +162,18 @@ app.get("/hrtvdashboard", async (req, res) => {
     </form>
 
     <h3>🕵️ Detected User-Agents</h3>
+
     ${detectedAgents.length === 0 ? "<p>No detected user-agents yet</p>" : ""}
+
     ${detectedAgents.map(d => `
       <div class="box">
-        <b>UA:</b><br>${d.ua}<br>
+        <b>UA:</b><br>${d.ua}<br><br>
         <b>Requests:</b> ${d.count}<br>
         <b>Last Seen:</b> ${d.lastSeen}
+        <form method="POST" action="/hrtvdashboard/allow">
+          <input type="hidden" name="ua" value="${d.ua}">
+          <button>✅ Add to Allowed</button>
+        </form>
       </div>
     `).join("")}
 
@@ -191,24 +183,37 @@ app.get("/hrtvdashboard", async (req, res) => {
 });
 
 /* ================= DASHBOARD ACTIONS ================= */
-app.post("/hrtvdashboard/add", async (req, res) => {
-  await db.collection("allowedAgents").add({
+app.post("/hrtvdashboard/add", (req, res) => {
+  allowedAgents.push({
     name: req.body.name,
     ua: req.body.ua
   });
   res.redirect("/hrtvdashboard");
 });
 
-app.post("/hrtvdashboard/edit", async (req, res) => {
-  await db.collection("allowedAgents").doc(req.body.id).update({
+app.post("/hrtvdashboard/edit", (req, res) => {
+  const i = req.body.index;
+  allowedAgents[i] = {
     name: req.body.name,
     ua: req.body.ua
-  });
+  };
   res.redirect("/hrtvdashboard");
 });
 
-app.post("/hrtvdashboard/delete", async (req, res) => {
-  await db.collection("allowedAgents").doc(req.body.id).delete();
+app.post("/hrtvdashboard/delete", (req, res) => {
+  allowedAgents.splice(req.body.index, 1);
+  res.redirect("/hrtvdashboard");
+});
+
+app.post("/hrtvdashboard/allow", (req, res) => {
+  const ua = req.body.ua;
+  const exists = allowedAgents.some(a => a.ua === ua);
+  if (!exists) {
+    allowedAgents.push({
+      name: "Detected Device",
+      ua
+    });
+  }
   res.redirect("/hrtvdashboard");
 });
 
