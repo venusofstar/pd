@@ -30,13 +30,61 @@ let lastPlaylist = "None";
 /* ================= HOME ================= */
 app.get("/", (req, res) => {
   res.send(`
-    <h2>👋 Welcome</h2>
-    <p>M3U Server is running</p>
-    <ul>
-      <li>/playlist1.m3u</li>
-      <li>/playlist2.m3u</li>
-      <li>/dashboard</li>
-    </ul>
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>HONOR TV PH</title>
+      <style>
+        body {
+          margin: 0;
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+          font-family: Arial, Helvetica, sans-serif;
+          color: #fff;
+          text-align: center;
+        }
+        .box {
+          background: rgba(0,0,0,0.45);
+          padding: 30px 40px;
+          border-radius: 16px;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+          max-width: 420px;
+        }
+        h1 {
+          margin: 0 0 10px;
+          font-size: 32px;
+          color: #00e5ff;
+        }
+        h2 {
+          margin: 0 0 15px;
+          font-weight: normal;
+        }
+        p {
+          font-size: 16px;
+          opacity: 0.9;
+        }
+        .status {
+          margin-top: 20px;
+          padding: 10px;
+          border-radius: 10px;
+          background: linear-gradient(90deg, #00c853, #64dd17);
+          color: #000;
+          font-weight: bold;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="box">
+        <h1>📺 HONOR TV PH</h1>
+        <h2>WELCOME TO HONOR TV PH</h2>
+        <p>Subscription Available</p>
+
+      </div>
+    </body>
+    </html>
   `);
 });
 
