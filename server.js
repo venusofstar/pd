@@ -10,28 +10,25 @@ app.use(express.urlencoded({ extended: true }));
 const ottStreamURL = "https://hntv.netlify.app/free-playlist";
 const altStreamURL = "https://pastebin.com/raw/YctRidwE";
 
-// Editable Allowed OTT User-Agents
+// User-Agent list with NAMES
 let allowedAgents = [
-  "OTT Navigator",
-  "OTT Player",
-  "OTT TV"
+  { name: "OTT Navigator", ua: "OTT Navigator" },
+  { name: "OTT Player", ua: "OTT Player" },
+  { name: "OTT TV", ua: "OTT TV" }
 ];
 
-// Track last user agent
 let lastUserAgent = "None";
 
-// 🔒 Forced Referer
+// Forced Referer
 const FORCED_REFERER = "https://hntv.netlify.app/free-playlist";
 
-/* ===========================
-   STREAM ROUTE
-=========================== */
+/* ================= STREAM ================= */
 app.get("/", async (req, res) => {
   const userAgent = req.headers["user-agent"] || "";
   lastUserAgent = userAgent;
 
-  const isAllowedOTTApp = allowedAgents.some(agent =>
-    userAgent.includes(agent)
+  const isAllowedOTTApp = allowedAgents.some(a =>
+    userAgent.includes(a.ua)
   );
 
   const streamURL = isAllowedOTTApp ? ottStreamURL : altStreamURL;
@@ -41,8 +38,7 @@ app.get("/", async (req, res) => {
       headers: {
         "User-Agent": userAgent || "OTT Navigator",
         "Referer": FORCED_REFERER,
-        "Origin": FORCED_REFERER,
-        "Cache-Control": "no-cache"
+        "Origin": FORCED_REFERER
       }
     });
 
@@ -53,72 +49,81 @@ app.get("/", async (req, res) => {
     res.setHeader("Content-Type", "application/vnd.apple.mpegurl");
     res.setHeader("Access-Control-Allow-Origin", "*");
     response.body.pipe(res);
-
-  } catch (err) {
+  } catch {
     res.status(500).send("Internal Server Error");
   }
 });
 
-/* ===========================
-   DASHBOARD UI
-=========================== */
+/* ================= DASHBOARD ================= */
 app.get("/dashboard", (req, res) => {
   res.send(`
-    <html>
-      <head>
-        <title>OTT Dashboard</title>
-        <style>
-          body { font-family: Arial; background:#111; color:#fff; padding:20px }
-          input, button { padding:6px }
-          .ua { margin:5px 0 }
-          button { margin-left:10px }
-        </style>
-      </head>
-      <body>
-        <h2>📺 OTT User-Agent Dashboard</h2>
+  <html>
+  <head>
+    <title>OTT Dashboard</title>
+    <style>
+      body { background:#111;color:#fff;font-family:Arial;padding:20px }
+      input,button{padding:6px;margin:3px}
+      .box{border:1px solid #333;padding:10px;margin-bottom:10px}
+    </style>
+  </head>
+  <body>
+    <h2>📺 User-Agent Dashboard</h2>
 
-        <p><b>Last Detected User-Agent:</b><br>${lastUserAgent}</p>
+    <p><b>Last Detected UA:</b><br>${lastUserAgent}</p>
 
-        <h3>Allowed User-Agents</h3>
-        ${allowedAgents.map(ua => `
-          <div class="ua">
-            ${ua}
-            <form method="POST" action="/dashboard/delete" style="display:inline">
-              <input type="hidden" name="ua" value="${ua}">
-              <button>❌ Remove</button>
-            </form>
-          </div>
-        `).join("")}
+    <h3>Allowed User-Agents</h3>
 
-        <h3>Add New User-Agent</h3>
-        <form method="POST" action="/dashboard/add">
-          <input name="ua" placeholder="New User-Agent" required>
-          <button>➕ Add</button>
+    ${allowedAgents.map((a, i) => `
+      <div class="box">
+        <form method="POST" action="/dashboard/edit">
+          <input type="hidden" name="index" value="${i}">
+          Name: <input name="name" value="${a.name}" required>
+          UA: <input name="ua" value="${a.ua}" required>
+          <button>✏️ Save</button>
         </form>
-      </body>
-    </html>
+        <form method="POST" action="/dashboard/delete">
+          <input type="hidden" name="index" value="${i}">
+          <button>❌ Delete</button>
+        </form>
+      </div>
+    `).join("")}
+
+    <h3>Add New User-Agent</h3>
+    <form method="POST" action="/dashboard/add">
+      Name: <input name="name" required>
+      UA: <input name="ua" required>
+      <button>➕ Add</button>
+    </form>
+
+  </body>
+  </html>
   `);
 });
 
-/* ===========================
-   DASHBOARD ACTIONS
-=========================== */
+/* ================= ACTIONS ================= */
 app.post("/dashboard/add", (req, res) => {
-  const ua = req.body.ua;
-  if (ua && !allowedAgents.includes(ua)) {
-    allowedAgents.push(ua);
-  }
+  allowedAgents.push({
+    name: req.body.name,
+    ua: req.body.ua
+  });
+  res.redirect("/dashboard");
+});
+
+app.post("/dashboard/edit", (req, res) => {
+  const i = req.body.index;
+  allowedAgents[i] = {
+    name: req.body.name,
+    ua: req.body.ua
+  };
   res.redirect("/dashboard");
 });
 
 app.post("/dashboard/delete", (req, res) => {
-  allowedAgents = allowedAgents.filter(ua => ua !== req.body.ua);
+  allowedAgents.splice(req.body.index, 1);
   res.redirect("/dashboard");
 });
 
-/* ===========================
-   START SERVER
-=========================== */
+/* ================= START ================= */
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
