@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Playlists
 const playlist1URL = "https://hntv.netlify.app/pa-id.html";
-const playlist2URL = "https://shorten.is/pppppaiid";
+const playlist2URL = "https://hntv.netlify.app/pa-id2.html";
 const altStreamURL = "https://hntv.netlify.app/free-playlist";
 
 // Forced headers
