@@ -116,7 +116,7 @@ app.get("/playlist2.m3u", (req, res) =>
 );
 
 /* ================= DASHBOARD ================= */
-app.get("/hrtvdashbord", (req, res) => {
+app.get("/hrtvdashboard", (req, res) => {
   res.send(`
   <html>
   <head>
@@ -139,7 +139,7 @@ app.get("/hrtvdashbord", (req, res) => {
 
     ${allowedAgents.map((a, i) => `
       <div class="box">
-        <form method="POST" action="/hrtvdashbord/edit">
+        <form method="POST" action="/hrtvdashboard/edit">
           <input type="hidden" name="index" value="${i}">
           Name:
           <input name="name" value="${a.name}" required>
@@ -147,7 +147,7 @@ app.get("/hrtvdashbord", (req, res) => {
           <input name="ua" value="${a.ua}" required>
           <button>💾 Save</button>
         </form>
-        <form method="POST" action="/hrtvdashbord/delete">
+        <form method="POST" action="/hrtvdashboard/delete">
           <input type="hidden" name="index" value="${i}">
           <button>❌ Delete</button>
         </form>
@@ -155,7 +155,7 @@ app.get("/hrtvdashbord", (req, res) => {
     `).join("")}
 
     <h3>➕ Add New Allowed UA</h3>
-    <form method="POST" action="/hrtvdashbord/add">
+    <form method="POST" action="/hrtvdashboard/add">
       Name: <input name="name" required>
       UA: <input name="ua" required>
       <button>Add</button>
@@ -170,7 +170,7 @@ app.get("/hrtvdashbord", (req, res) => {
         <b>UA:</b><br>${d.ua}<br><br>
         <b>Requests:</b> ${d.count}<br>
         <b>Last Seen:</b> ${d.lastSeen}
-        <form method="POST" action="/hrtvdashbord/allow">
+        <form method="POST" action="/hrtvdashboard/allow">
           <input type="hidden" name="ua" value="${d.ua}">
           <button>✅ Add to Allowed</button>
         </form>
@@ -183,29 +183,29 @@ app.get("/hrtvdashbord", (req, res) => {
 });
 
 /* ================= DASHBOARD ACTIONS ================= */
-app.post("/hrtvdashbord/add", (req, res) => {
+app.post("/hrtvdashboard/add", (req, res) => {
   allowedAgents.push({
     name: req.body.name,
     ua: req.body.ua
   });
-  res.redirect("/hrtvdashbord");
+  res.redirect("/hrtvdashboard");
 });
 
-app.post("/hrtvdashbord/edit", (req, res) => {
+app.post("/hrtvdashboard/edit", (req, res) => {
   const i = req.body.index;
   allowedAgents[i] = {
     name: req.body.name,
     ua: req.body.ua
   };
-  res.redirect("/hrtvdashbord");
+  res.redirect("/hrtvdashboard");
 });
 
-app.post("/hrtvdashbord/delete", (req, res) => {
+app.post("/hrtvdashboard/delete", (req, res) => {
   allowedAgents.splice(req.body.index, 1);
-  res.redirect("/hrtvdashbord");
+  res.redirect("/hrtvdashboard");
 });
 
-app.post("/hrtvdashbord/allow", (req, res) => {
+app.post("/hrtvdashboard/allow", (req, res) => {
   const ua = req.body.ua;
   const exists = allowedAgents.some(a => a.ua === ua);
   if (!exists) {
@@ -214,7 +214,7 @@ app.post("/hrtvdashbord/allow", (req, res) => {
       ua
     });
   }
-  res.redirect("/hrtvdashbord");
+  res.redirect("/hrtvdashboard");
 });
 
 /* ================= START ================= */
