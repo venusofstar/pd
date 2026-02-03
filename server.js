@@ -16,15 +16,18 @@ const altStreamURL = "https://hntv.netlify.app/free-playlist";
 // Forced headers
 const FORCED_REFERER = "https://hntv.netlify.app/pa-id.html";
 
-// Allowed OTT Apps (ALL versions)
+// Allowed OTT apps (ALL versions)
 const ALLOWED_OTT_APPS = [
   "OTT TV",
   "OTT Navigator",
   "OTT Player"
 ];
 
-// Allowed Device IDs (dashboard controlled)
-let allowedDeviceIds = [];
+// ✅ PRE-ALLOWED DEVICE IDs
+let allowedDeviceIds = [
+  "1fx95ew",
+  "prkmm2"
+];
 
 // Detected devices
 let detectedAgents = [];
@@ -107,7 +110,7 @@ async function servePlaylist(req, res, ottURL, playlistName) {
     });
   }
 
-  // Access rule
+  // 🔐 ACCESS RULE
   const allowed =
     isAllowedOTT(userAgent) &&
     deviceId !== "UNKNOWN" &&
@@ -179,7 +182,6 @@ app.get("/hrtvdashboard", (req, res) => {
     }
 
     <h3>🕵️ Detected Devices</h3>
-
     ${
       detectedAgents.length === 0
         ? "<p>No detected devices yet</p>"
@@ -204,7 +206,7 @@ app.get("/hrtvdashboard", (req, res) => {
   `);
 });
 
-/* ================= DASHBOARD ACTIONS ================= */
+/* ================= DASHBOARD ACTION ================= */
 
 app.post("/hrtvdashboard/allow-device", (req, res) => {
   const { deviceId } = req.body;
