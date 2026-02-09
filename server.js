@@ -57,7 +57,7 @@ app.get("/", (req, res) => {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Owner Profile</title>
+<title>HONOR TV INFO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Font Awesome for Icons -->
@@ -241,9 +241,7 @@ footer {
   <div class="section">
     <h2>About</h2>
     <p>
-      This website is owned and maintained by <b>HONOR TV PH</b>.  
-      I specialize in creating apps, websites, and digital platforms
-      with a focus on speed, usability, and eye-catching design.
+      This website is owned and maintained by <b>HONOR TV PH</b>.    
     </p>
   </div>
 
