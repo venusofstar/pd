@@ -57,11 +57,14 @@ app.get("/", (req, res) => {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>HONOR TV INFO</title>
+<title>HONOR TV PH – Official Info</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Font Awesome for Icons -->
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<meta name="description" content="HONOR TV PH official information page. App details, contact info, and community links.">
+<meta name="robots" content="index, follow">
 
 <style>
 body {
@@ -87,12 +90,12 @@ body {
 }
 
 .profile img {
-  width: 160px;
-  height: 160px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   object-fit: cover;
-  border: 5px solid #fff;
-  margin-right: 25px;
+  border: 4px solid #fff;
+  margin-right: 20px;
 }
 
 .profile-info h1 {
@@ -102,11 +105,11 @@ body {
 
 .profile-info p {
   margin-top: 10px;
-  font-size: 16px;
+  font-size: 15px;
   opacity: 0.95;
 }
 
-/* SOCIAL ICONS */
+/* SOCIAL */
 .social-icons {
   margin-top: 15px;
 }
@@ -115,8 +118,8 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   margin-right: 10px;
   border-radius: 50%;
   font-size: 20px;
@@ -126,14 +129,14 @@ body {
 }
 
 .social-icons a:hover {
-  transform: scale(1.2);
+  transform: scale(1.15);
 }
 
 .facebook { background: #1877f2; }
 .youtube { background: #ff0000; }
 .telegram { background: #0088cc; }
 
-/* SECTIONS */
+/* SECTION */
 .section {
   background: rgba(255,255,255,0.12);
   margin: 25px 15px;
@@ -144,7 +147,7 @@ body {
 
 .section h2 {
   margin-top: 0;
-  font-size: 26px;
+  font-size: 24px;
   color: #ffeb3b;
 }
 
@@ -160,11 +163,6 @@ body {
   border-radius: 18px;
   padding: 15px;
   text-align: center;
-  transition: 0.3s;
-}
-
-.app-card:hover {
-  transform: translateY(-6px);
 }
 
 .app-card img {
@@ -188,22 +186,11 @@ body {
   text-decoration: none;
 }
 
-/* CONTACT */
-.contact p {
-  font-size: 16px;
-  margin: 10px 0;
-}
-
-.contact a {
-  color: #ffeb3b;
-  text-decoration: none;
-  font-weight: bold;
-}
-
 /* FOOTER */
 footer {
   text-align: center;
-  padding: 15px;
+  padding: 20px;
+  font-size: 14px;
   opacity: 0.85;
 }
 </style>
@@ -215,22 +202,23 @@ footer {
 
   <!-- PROFILE -->
   <div class="profile">
-    <img src="https://w0.peakpx.com/wallpaper/237/224/HD-wallpaper-anonymous-anonymous-dont-dragon-logo-mask-touch.jpg" alt="Owner Photo">
+    <img src="https://w0.peakpx.com/wallpaper/237/224/HD-wallpaper-anonymous-anonymous-dont-dragon-logo-mask-touch.jpg" alt="HONOR TV PH Logo">
 
     <div class="profile-info">
       <h1>HONOR TV PH</h1>
       <p>
-       Always Available Subscription in VIP PLAYLIST Contact Me In My Facebook Page And Telegram
+        Official information page for HONOR TV PH.<br>
+        This website provides app details, updates, and community links only.
       </p>
 
       <div class="social-icons">
-        <a href="https://www.facebook.com/share/1AtberUt5G/" class="facebook" target="_blank">
+        <a href="https://www.facebook.com/share/1AtberUt5G/" class="facebook" target="_blank" rel="noopener">
           <i class="fab fa-facebook-f"></i>
         </a>
-        <a href="https://youtube.com/@honortvph-s5k" class="youtube" target="_blank">
+        <a href="https://youtube.com/@honortvph-s5k" class="youtube" target="_blank" rel="noopener">
           <i class="fab fa-youtube"></i>
         </a>
-        <a href="https://t.me/+CeW6bOjbYTVlYWI1" class="telegram" target="_blank">
+        <a href="https://t.me/+CeW6bOjbYTVlYWI1" class="telegram" target="_blank" rel="noopener">
           <i class="fab fa-telegram-plane"></i>
         </a>
       </div>
@@ -241,41 +229,57 @@ footer {
   <div class="section">
     <h2>About</h2>
     <p>
-      This website is owned and maintained by <b>HONOR TV PH</b>.    
+      HONOR TV PH is an independent platform that shares application information and community updates.
+      We do not host files directly on this website.
     </p>
   </div>
 
   <!-- APPS -->
   <div class="section">
-    <h2>Apps</h2>
+    <h2>Applications</h2>
+
+    <p style="font-size:14px;opacity:0.9;">
+      ⚠️ Downloads are hosted on third-party services. Please review files before installing.
+    </p>
 
     <div class="apps">
+
       <div class="app-card">
-        <img src="https://i.imgur.com/C6CD0gF.jpeg" alt="App 1">
+        <img src="https://i.imgur.com/C6CD0gF.jpeg" alt="HONOR TV VIP">
         <h3>HONOR TV VIP 1.2</h3>
-        <a href="https://www.mediafire.com/file/pyw2denf9xp1xs2/HONOR_TV_%2528VIP%2529_1.2.apk/file" target="_blank">Download</a>
+        <a href="https://www.mediafire.com/file/pyw2denf9xp1xs2/HONOR_TV_%2528VIP%2529_1.2.apk/file" target="_blank" rel="noopener">View Download</a>
       </div>
 
       <div class="app-card">
-        <img src="https://i.imgur.com/VJZ2zVL.png" alt="App 2">
+        <img src="https://i.imgur.com/VJZ2zVL.png" alt="HONOR TV PH App">
         <h3>HONOR TV PH</h3>
-        <a href="https://www.mediafire.com/file/cf314vqe9ovh9ez/HONOR_TV_PH.apk/file" target="_blank">Download</a>
+        <a href="https://www.mediafire.com/file/cf314vqe9ovh9ez/HONOR_TV_PH.apk/file" target="_blank" rel="noopener">View Download</a>
       </div>
 
       <div class="app-card">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ7MHfAy4aUvx6tWJ17dZtIlmnpXmgWRpwFq8Qe-oc13TOrd-IuPe2xU6p&s=10" alt="App 3">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ7MHfAy4aUvx6tWJ17dZtIlmnpXmgWRpwFq8Qe-oc13TOrd-IuPe2xU6p&s=10" alt="OTT TV">
         <h3>OTT TV</h3>
-        <h3>Login code 👉 6u7Tho</h3>
-        <a href="https://www.mediafire.com/file/xka22xxqt8pnhss/OTT_TV_1.7.2.2.apk/file" target="_blank">Download</a>
+        <p style="font-size:14px;">Login Code: <b>6u7Tho</b></p>
+        <a href="https://www.mediafire.com/file/xka22xxqt8pnhss/OTT_TV_1.7.2.2.apk/file" target="_blank" rel="noopener">View Download</a>
       </div>
+
     </div>
   </div>
 
   <!-- CONTACT -->
-  <div class="section contact">
+  <div class="section">
     <h2>Contact</h2>
-    <p>📞 Phone: <a href="tel:+63XXXXXXXXXX">+63 *** *** ****</a></p>
-    <p>📧 Gmail: <a href="mailto:honortvph@gmail.com">honortvph@gmail.com</a></p>
+    <p>📧 Email: <a href="mailto:honortvph@gmail.com" style="color:#ffeb3b;">honortvph@gmail.com</a></p>
+    <p>📱 Community support is available via Facebook and Telegram.</p>
+  </div>
+
+  <!-- LEGAL -->
+  <div class="section">
+    <h2>Legal</h2>
+    <p style="font-size:14px;">
+      This site does not collect personal data and does not host files directly.
+      All trademarks belong to their respective owners.
+    </p>
   </div>
 
   <footer>
@@ -286,9 +290,6 @@ footer {
 
 </body>
 </html>
-
-
-
   `);
 });
 
